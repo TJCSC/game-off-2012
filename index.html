@@ -61,9 +61,13 @@
 
             function updateSnake(snake) {
                 var cells = snake.cells;
-                var tail = cells.pop();
-                tail.x = cells[0].x;
-                tail.y = cells[0].y;
+                var head = cells[0];
+                if(head.x == food.x && head.y == food.y) {
+                    food = placeFood();
+                } else {
+                    cells.pop();
+                }
+                var tail = {x:head.x,y:head.y};
                 switch(snake.dir) {
                     case dirUp:
                         tail.y--;
