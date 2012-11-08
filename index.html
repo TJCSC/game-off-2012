@@ -105,16 +105,20 @@
             function handleKeyDown(evt) {
                 switch (evt.keyCode) {
                     case 37: // Left
-                        getActiveSnake().dir = 3;
+                        if(getActiveSnake().dir != 1)
+                            getActiveSnake().dir = 3;
                         break;
                     case 38: // Up
-                        getActiveSnake().dir = 0;
+                        if(getActiveSnake().dir != 2)
+                            getActiveSnake().dir = 0;
                         break;
                     case 39: // Right
-                        getActiveSnake().dir = 1;
+                        if(getActiveSnake().dir != 3)
+                            getActiveSnake().dir = 1;
                         break;
                     case 40: // Down
-                        getActiveSnake().dir = 2;
+                        if(getActiveSnake().dir != 0)
+                            getActiveSnake().dir = 2;
                         break;
                 }
             }
