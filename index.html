@@ -20,6 +20,7 @@
             var food = placeFood();
             var cellWidth = 10;
 
+            window.addEventListener('keydown',handleKeyDown,true);
             requestAnimationFrame(loop)
 
             function loop() {
@@ -98,6 +99,28 @@
                     drawCell({x:WIDTH/cellWidth-1, y:y}, 'black');
                 }
             }
+
+            function handleKeyDown(evt) {
+                switch (evt.keyCode) {
+                    case 37: // Left
+                        getActiveSnake().dir = 3;
+                        break;
+                    case 38: // Up
+                        getActiveSnake().dir = 0;
+                        break;
+                    case 39: // Right
+                        getActiveSnake().dir = 1;
+                        break;
+                    case 40: // Down
+                        getActiveSnake().dir = 2;
+                        break;
+                }
+            }
+
+            function getActiveSnake() { // Fix me
+                return snakes[0];
+            }
+
         </script>
     </body>
 </html>
