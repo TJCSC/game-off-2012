@@ -21,6 +21,11 @@
             var food = placeFood();
             var cellWidth = 10;
 
+            const dirUp = 0;
+            const dirRight = 1;
+            const dirDown = 2;
+            const dirLeft = 3;
+
             window.addEventListener('keydown',handleKeyDown,true);
             requestAnimationFrame(loop)
 
@@ -40,13 +45,13 @@
                 for(var i=5; i>0; i--) {
                     firstSnake.cells.push({x:i, y:1});
                 }
-                firstSnake.dir = 1;
+                firstSnake.dir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
                     secondSnake.cells.push({x:i, y:2});
                 }
-                secondSnake.dir = 1;
+                secondSnake.dir = dirRight;
                 secondSnake.color = 'green';
                 return [firstSnake,secondSnake];
             }
@@ -57,16 +62,16 @@
                 tail.x = cells[0].x;
                 tail.y = cells[0].y;
                 switch(snake.dir) {
-                case 0:
+                case dirUp:
                     tail.y--;
                     break;
-                case 1:
+                case dirRight:
                     tail.x++;
                     break;
-                case 2:
+                case dirDown:
                     tail.y++;
                     break;
-                case 3:
+                case dirLeft:
                     tail.x--;
                     break;
                 default:
@@ -110,25 +115,31 @@
             }
 
             function handleKeyDown(evt) {
+                const keySpace = 32;
+                const keyLeft = 37;
+                const keyUp = 38;
+                const keyRight = 39;
+                const keyDown = 40;
+
                 switch (evt.keyCode) {
-                    case 32: // Space bar
+                    case keySpace:
                         changeSnake();
                         break;
-                    case 37: // Left
-                        if(getActiveSnake().dir != 1)
-                            getActiveSnake().dir = 3;
+                    case keyLeft:
+                        if(getActiveSnake().dir != dirRight)
+                            getActiveSnake().dir = dirLeft;
                         break;
-                    case 38: // Up
-                        if(getActiveSnake().dir != 2)
-                            getActiveSnake().dir = 0;
+                    case keyUp:
+                        if(getActiveSnake().dir != dirDown)
+                            getActiveSnake().dir = dirUp;
                         break;
-                    case 39: // Right
-                        if(getActiveSnake().dir != 3)
-                            getActiveSnake().dir = 1;
+                    case keyRight:
+                        if(getActiveSnake().dir != dirLeft)
+                            getActiveSnake().dir = dirRight;
                         break;
-                    case 40: // Down
-                        if(getActiveSnake().dir != 0)
-                            getActiveSnake().dir = 2;
+                    case keyDown:
+                        if(getActiveSnake().dir != dirUp)
+                            getActiveSnake().dir = dirDown;
                         break;
                 }
             }
