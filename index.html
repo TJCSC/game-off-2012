@@ -17,6 +17,7 @@
                 oRequestAnimationFrame;
 
             var snakes = initSnakes();
+            var activeSnake = snakes[0];
             var food = placeFood();
             var cellWidth = 10;
 
@@ -41,7 +42,13 @@
                 }
                 firstSnake.dir = 1;
                 firstSnake.color = 'blue';
-                return [firstSnake];
+                var secondSnake = {cells:new Array()};
+                for(var i=5; i>0; i--) {
+                    secondSnake.cells.push({x:i, y:2});
+                }
+                secondSnake.dir = 1;
+                secondSnake.color = 'green';
+                return [firstSnake,secondSnake];
             }
 
             function updateSnake(snake) {
@@ -104,6 +111,9 @@
 
             function handleKeyDown(evt) {
                 switch (evt.keyCode) {
+                    case 32: // Space bar
+                        changeSnake();
+                        break;
                     case 37: // Left
                         if(getActiveSnake().dir != 1)
                             getActiveSnake().dir = 3;
@@ -122,9 +132,19 @@
                         break;
                 }
             }
+            function changeSnake() {
+                var oldSnake = getActiveSnake();
+                oldSnake.color = 'green';
+                
+                var newPos = snakes.indexOf(oldSnake) + 1;
+                if(newPos >= snakes.length)
+                    newPos = 0;
+                activeSnake = snakes[newPos];
+                activeSnake.color = 'blue';
+            }
 
             function getActiveSnake() { // Fix me
-                return snakes[0];
+                return activeSnake;
             }
 
         </script>
