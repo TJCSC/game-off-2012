@@ -15,16 +15,15 @@
                 mozRequestAnimationFrame ||
                 msRequestAnimationFrame ||
                 oRequestAnimationFrame;
+            const dirUp = 0;
+            const dirRight = 1;
+            const dirDown = 2;
+            const dirLeft = 3;
 
             var snakes = initSnakes();
             var activeSnake = snakes[0];
             var cellWidth = 10;
             var food = placeFood();
-
-            const dirUp = 0;
-            const dirRight = 1;
-            const dirDown = 2;
-            const dirLeft = 3;
 
             window.addEventListener('keydown',handleKeyDown,true);
             requestAnimationFrame(loop);
@@ -47,13 +46,15 @@
                 for(var i=5; i>0; i--) {
                     firstSnake.cells.push({x:i, y:1});
                 }
-                firstSnake.dir = 1;
+                firstSnake.dir = dirRight;
+                firstSnake.prevDir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
                     secondSnake.cells.push({x:i, y:2});
                 }
-                secondSnake.dir = 1; // Works with 1, but not with dirRight
+                secondSnake.dir = dirRight;
+                secondSnake.prevDir = dirRight;
                 secondSnake.color = 'green';
                 return [firstSnake,secondSnake];
             }
@@ -80,6 +81,7 @@
                         console.error('bad direction');
                 }
                 snake.cells.unshift(tail);
+                snake.prevDir = snake.dir;
             }
 
             function drawCell(cell, color) {
@@ -134,19 +136,19 @@
                         changeSnake();
                         break;
                     case keyLeft:
-                        if(getActiveSnake().dir != dirRight)
+                        if(getActiveSnake().prevDir != dirRight)
                             getActiveSnake().dir = dirLeft;
                         break;
                     case keyUp:
-                        if(getActiveSnake().dir != dirDown)
+                        if(getActiveSnake().prevDir != dirDown)
                             getActiveSnake().dir = dirUp;
                         break;
                     case keyRight:
-                        if(getActiveSnake().dir != dirLeft)
+                        if(getActiveSnake().prevDir != dirLeft)
                             getActiveSnake().dir = dirRight;
                         break;
                     case keyDown:
-                        if(getActiveSnake().dir != dirUp)
+                        if(getActiveSnake().prevDir != dirUp)
                             getActiveSnake().dir = dirDown;
                         break;
                 }
