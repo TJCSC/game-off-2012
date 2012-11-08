@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <title>Forked up Snakes</title>
+    </head>
+    <body>
+        <canvas id="canvas" width="600" height="400"></canvas>
+        <script>
+            var canvas = document.getElementById('canvas');
+            var WIDTH = canvas.width;
+            var HEIGHT = canvas.height;
+            var context = canvas.getContext('2d');
+            var requestAnimationFrame = 
+                requestAnimationFrame ||
+                webkitRequestAnimationFrame ||
+                mozRequestAnimationFrame ||
+                msRequestAnimationFrame ||
+                oRequestAnimationFrame;
+
+            var snakes = initSnakes();
+            var food = placeFood();
+            var cellWidth = 10;
+
+            requestAnimationFrame(loop)
+
+            function loop() {
+                context.clearRect(0, 0, WIDTH, HEIGHT);
+                for(var i in snakes) {
+                    drawSnake(snakes[i]);
+                    updateSnake(snakes[i]);
+                }
+                drawWall();
+                drawCell(food, 'red');
+                requestAnimationFrame(loop);
+            }
+
+            function initSnakes() {
+                var firstSnake = {cells:new Array()};
+                for(var i=5; i>0; i--) {
+                    firstSnake.cells.push({x:i, y:1});
+                }
+                firstSnake.dir = 1;
+                firstSnake.color = 'blue';
+                return [firstSnake];
+            }
+
+            function updateSnake(snake) {
+                var cells = snake.cells;
+                var tail = cells.pop();
+                switch(snake.dir) {
+                case 0:
+                    tail.y = cells[0].y - 1;
+                    break;
+                case 1:
+                    tail.x = cells[0].x + 1;
+                    break;
+                case 2:
+                    tail.y = cells[0].y + 1;
+                    break;
+                case 3:
+                    tail.x = cells[0].x - 1;
+                    break;
+                default:
+                    console.error('bad direction');
+                }
+                snake.cells.unshift(tail);
+            }
+
+            function drawCell(cell, color) {
+                context.beginPath();
+                var x = cell.x * cellWidth;
+                var y = cell.y * cellWidth;
+                context.rect(x, y, cellWidth, cellWidth);
+                context.fillStyle = color;
+                context.fill();
+                context.lineWidth = 2;
+                context.strokeStyle = 'white';
+                context.stroke();
+                context.closePath();
+            }
+
+            function placeFood() {
+                return {x:10, y:10};
+            }
+
+            function drawSnake(snake) {
+                for(var i in snake.cells) {
+                    drawCell(snake.cells[i], snake.color);
+                }
+            }
+
+            function drawWall() {
+                for(var x=0; x<WIDTH/cellWidth; x++) {
+                    drawCell({x:x, y:0}, 'black');
+                    drawCell({x:x, y:HEIGHT/cellWidth-1}, 'black');
+                }
+                for(var y=1; y<HEIGHT/cellWidth-1; y++) {
+                    drawCell({x:0, y:y}, 'black');
+                    drawCell({x:WIDTH/cellWidth-1, y:y}, 'black');
+                }
+            }
+        </script>
+    </body>
+</html>
