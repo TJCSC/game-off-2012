@@ -62,11 +62,6 @@
             function updateSnake(snake) {
                 var cells = snake.cells;
                 var head = cells[0];
-                if(head.x == food.x && head.y == food.y) {
-                    food = placeFood();
-                } else {
-                    cells.pop();
-                }
                 var tail = {x:head.x,y:head.y};
                 switch(snake.dir) {
                     case dirUp:
@@ -86,6 +81,37 @@
                 }
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
+                if(head.x == food.x && head.y == food.y) {
+                    food = placeFood();
+                    if(snake.cells.length === 10) {
+                        splitSnake(snake);
+                    }
+                } else {
+                    cells.pop();
+                }
+            }
+
+            function splitSnake(snake) {
+                var newSnake = {cells:new Array()};
+                for(var i=0; i<5; i++) {
+                    newSnake.cells.push(snake.cells.pop());
+                }
+                var cells = newSnake.cells;
+                if(cells[0].x+1 === cells[1].x) {
+                    newSnake.dir = dirLeft;
+                    newSnake.prevDir = dirLeft;
+                } else if(cells[0].x-1 === cells[1].x) {
+                    newSnake.dir = dirRight;
+                    newSnake.prevDir = dirRight;
+                } else if(cells[0].y+1 === cells[1].y) {
+                    newSnake.dir = dirUp;
+                    newSnake.prevDir = dirUp;
+                } else if(cells[0].y-1 === cells[1].y) {
+                    newSnake.dir = dirDown;
+                    newSnake.prevDir = dirDown;
+                }
+                newSnake.color = 'green';
+                snakes.push(newSnake);
             }
 
             function drawCell(cell, color) {
