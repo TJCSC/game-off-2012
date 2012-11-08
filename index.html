@@ -3,7 +3,7 @@
         <title>Forked up Snakes</title>
     </head>
     <body>
-        <canvas id="canvas" width="600" height="400"></canvas>
+        <canvas id="canvas" width="800" height="600"></canvas>
         <script>
             var canvas = document.getElementById('canvas');
             var WIDTH = canvas.width;
@@ -27,17 +27,19 @@
             const dirLeft = 3;
 
             window.addEventListener('keydown',handleKeyDown,true);
-            requestAnimationFrame(loop)
+            requestAnimationFrame(loop);
 
             function loop() {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
                 for(var i in snakes) {
+                    console.log("check");
                     drawSnake(snakes[i]);
                     updateSnake(snakes[i]);
                 }
+                console.log("done");
                 drawWall();
                 drawCell(food, 'red');
-                requestAnimationFrame(loop);
+                window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
             function initSnakes() {
@@ -45,13 +47,13 @@
                 for(var i=5; i>0; i--) {
                     firstSnake.cells.push({x:i, y:1});
                 }
-                firstSnake.dir = dirRight;
+                firstSnake.dir = 1;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
                     secondSnake.cells.push({x:i, y:2});
                 }
-                secondSnake.dir = dirRight;
+                secondSnake.dir = 1; // Works with 1, but not with dirRight
                 secondSnake.color = 'green';
                 return [firstSnake,secondSnake];
             }
@@ -62,20 +64,20 @@
                 tail.x = cells[0].x;
                 tail.y = cells[0].y;
                 switch(snake.dir) {
-                case dirUp:
-                    tail.y--;
-                    break;
-                case dirRight:
-                    tail.x++;
-                    break;
-                case dirDown:
-                    tail.y++;
-                    break;
-                case dirLeft:
-                    tail.x--;
-                    break;
-                default:
-                    console.error('bad direction');
+                    case dirUp:
+                        tail.y--;
+                        break;
+                    case dirRight:
+                        tail.x++;
+                        break;
+                    case dirDown:
+                        tail.y++;
+                        break;
+                    case dirLeft:
+                        tail.x--;
+                        break;
+                    default:
+                        console.error('bad direction');
                 }
                 snake.cells.unshift(tail);
             }
