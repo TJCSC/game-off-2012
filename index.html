@@ -6,8 +6,8 @@
         <canvas id="canvas" width="800" height="600"></canvas>
         <script>
             var canvas = document.getElementById('canvas');
-            var WIDTH = canvas.width;
-            var HEIGHT = canvas.height;
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
             var context = canvas.getContext('2d');
             var requestAnimationFrame = 
                 requestAnimationFrame ||
@@ -18,8 +18,8 @@
 
             var snakes = initSnakes();
             var activeSnake = snakes[0];
-            var food = placeFood();
             var cellWidth = 10;
+            var food = placeFood();
 
             const dirUp = 0;
             const dirRight = 1;
@@ -32,11 +32,11 @@
             function loop() {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
                 for(var i in snakes) {
-                    console.log("check");
+                    //console.log("check");
                     drawSnake(snakes[i]);
                     updateSnake(snakes[i]);
                 }
-                console.log("done");
+                //console.log("done");
                 drawWall();
                 drawCell(food, 'red');
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
@@ -96,7 +96,13 @@
             }
 
             function placeFood() {
-                return {x:10, y:10};
+                var x = Math.random() * (WIDTH/cellWidth-2);
+                x = Math.floor(x);
+                x += 1;
+                var y = Math.random() * (HEIGHT/cellWidth-2);
+                y = Math.floor(y);
+                y += 1;
+                return {x:x, y:y};
             }
 
             function drawSnake(snake) {
