@@ -10,11 +10,11 @@
             const HEIGHT = canvas.height;
             var context = canvas.getContext('2d');
             var requestAnimationFrame = 
-                requestAnimationFrame ||
-                webkitRequestAnimationFrame ||
-                mozRequestAnimationFrame ||
-                msRequestAnimationFrame ||
-                oRequestAnimationFrame;
+                window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                window.oRequestAnimationFrame;
             const dirUp = 0;
             const dirRight = 1;
             const dirDown = 2;
@@ -38,9 +38,6 @@
                 //console.log("done");
                 drawWall();
                 drawCell(food, 'red');
-                if(killSnakes()) {
-                    console.log("dead");
-                }
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
