@@ -58,7 +58,7 @@
                 return [firstSnake,secondSnake];
             }
 
-            function updateSnake(snake) {
+            function updateSnake(snake) { 
                 var cells = snake.cells;
                 var head = cells[0];
                 var tail = {x:head.x,y:head.y,r:head.r};
@@ -68,7 +68,7 @@
 
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
-                if(head.x == food.x && head.y == food.y) {
+                if(Math.abs(head.x - food.x) <= 1 && Math.abs(head.y - food.y) <= 1) { // fixme: better collision detection
                     food = placeFood();
                     if(snake.cells.length === 10) {
 //                        splitSnake(snake);
@@ -78,7 +78,7 @@
                 }
             }
 
-            function splitSnake(snake) {
+            function splitSnake(snake) { // fixme
                 var newSnake = {cells:new Array()};
                 for(var i=0; i<5; i++) {
                     newSnake.cells.push(snake.cells.pop());
@@ -105,7 +105,7 @@
             // you cut off part of that snake.  If you have a head on
             // collision, both die, unless one snake is just a head,
             // in which case it dies and the other lives.
-            function killSnakes() {
+            function killSnakes() { // fixme
                 for(var i=snakes.length-1; i>=0; i--) {
                     var snake = snakes[i];
                     var head = snake.cells[0];
