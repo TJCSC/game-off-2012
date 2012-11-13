@@ -16,9 +16,10 @@
                 window.msRequestAnimationFrame ||
                 window.oRequestAnimationFrame;
             const dirUp = 0;
-            const dirRight = 1;
-            const dirDown = 2;
-            const dirLeft = 3;
+            const dirRight = Math.PI/2;
+            const dirDown = Math.PI;
+            const dirLeft = 3*Math.PI/2;
+            const turnSpeed = Math.PI/12;
 
             var snakes = initSnakes();
             var activeSnake = snakes[0];
@@ -31,27 +32,25 @@
             function loop() {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
                 for(var i in snakes) {
-                    //console.log("check");
                     drawSnake(snakes[i]);
                     updateSnake(snakes[i]);
                 }
-                //console.log("done");
                 drawWall();
-                drawCell(food, 'red');
+//                drawCell(food, 'red');
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
             function initSnakes() {
                 var firstSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    firstSnake.cells.push({x:i, y:1});
+                    firstSnake.cells.push({x:i, y:1, r:0});
                 }
                 firstSnake.dir = dirRight;
                 firstSnake.prevDir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    secondSnake.cells.push({x:i, y:2});
+                    secondSnake.cells.push({x:i, y:2, r:0});
                 }
                 secondSnake.dir = dirRight;
                 secondSnake.prevDir = dirRight;
@@ -62,29 +61,16 @@
             function updateSnake(snake) {
                 var cells = snake.cells;
                 var head = cells[0];
-                var tail = {x:head.x,y:head.y};
-                switch(snake.dir) {
-                    case dirUp:
-                        tail.y--;
-                        break;
-                    case dirRight:
-                        tail.x++;
-                        break;
-                    case dirDown:
-                        tail.y++;
-                        break;
-                    case dirLeft:
-                        tail.x--;
-                        break;
-                    default:
-                        console.error('bad direction');
-                }
+                var tail = {x:head.x,y:head.y,r:head.r};
+                tail.x += Math.cos(snake.dir);
+                tail.y += Math.sin(snake.dir);
+
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
                 if(head.x == food.x && head.y == food.y) {
                     food = placeFood();
                     if(snake.cells.length === 10) {
-                        splitSnake(snake);
+//                        splitSnake(snake);
                     }
                 } else {
                     cells.pop();
@@ -151,6 +137,7 @@
                 context.beginPath();
                 var x = cell.x * cellWidth;
                 var y = cell.y * cellWidth;
+                context.rotate(cell.r);
                 context.rect(x, y, cellWidth, cellWidth);
                 context.fillStyle = color;
                 context.fill();
@@ -167,7 +154,7 @@
                 var y = Math.random() * (HEIGHT/cellWidth-2);
                 y = Math.floor(y);
                 y += 1;
-                return {x:x, y:y};
+                return {x:x, y:y, r:0};
             }
 
             function drawSnake(snake) {
@@ -178,12 +165,12 @@
 
             function drawWall() {
                 for(var x=0; x<WIDTH/cellWidth; x++) {
-                    drawCell({x:x, y:0}, 'black');
-                    drawCell({x:x, y:HEIGHT/cellWidth-1}, 'black');
+                    drawCell({x:x, y:0, r:0}, 'black');
+                    drawCell({x:x, y:HEIGHT/cellWidth-1, r:0}, 'black');
                 }
                 for(var y=1; y<HEIGHT/cellWidth-1; y++) {
-                    drawCell({x:0, y:y}, 'black');
-                    drawCell({x:WIDTH/cellWidth-1, y:y}, 'black');
+                    drawCell({x:0, y:y, r:0}, 'black');
+                    drawCell({x:WIDTH/cellWidth-1, y:y, r:0}, 'black');
                 }
             }
 
@@ -199,20 +186,14 @@
                         changeSnake();
                         break;
                     case keyLeft:
-                        if(getActiveSnake().prevDir != dirRight)
-                            getActiveSnake().dir = dirLeft;
-                        break;
-                    case keyUp:
-                        if(getActiveSnake().prevDir != dirDown)
-                            getActiveSnake().dir = dirUp;
+                        getActiveSnake().dir -= turnSpeed;
+                        if(getActiveSnake().dir < 0)
+                            getActiveSnake().dir += 2*Math.PI;
                         break;
                     case keyRight:
-                        if(getActiveSnake().prevDir != dirLeft)
-                            getActiveSnake().dir = dirRight;
-                        break;
-                    case keyDown:
-                        if(getActiveSnake().prevDir != dirUp)
-                            getActiveSnake().dir = dirDown;
+                        getActiveSnake().dir += turnSpeed;
+                        if(getActiveSnake().dir > 2*Math.PI)
+                            getActiveSnake().dir -= 2*Math.PI;
                         break;
                 }
             }
