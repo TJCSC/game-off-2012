@@ -25,8 +25,15 @@
             var activeSnake = snakes[0];
             var cellWidth = 10;
             var food = placeFood();
+            const keySpace = 32;
+            const keyLeft = 37;
+            const keyUp = 38;
+            const keyRight = 39;
+            const keyDown = 40;
+            var keys = {keyLeft:false, keyUp:false, keyRight:false, keyDown:false};
 
             window.addEventListener('keydown',handleKeyDown,true);
+            window.addEventListener('keyup',handleKeyUp,true);
             requestAnimationFrame(loop);
 
             function loop() {
@@ -37,6 +44,7 @@
                 }
                 drawWall();
                 drawCell(food, 'red');
+                doMovement();
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
@@ -134,6 +142,21 @@
                 }
             }
 
+            function doMovement() {
+                if(keys[keyLeft]) {
+                    getActiveSnake().dir -= turnSpeed;
+                    if(getActiveSnake().dir < 0) {
+                        getActiveSnake().dir += 2*Math.PI;
+                    }
+                }
+                if(keys[keyRight]) {
+                    getActiveSnake().dir += turnSpeed;
+                    if(getActiveSnake().dir > 2*Math.PI) {
+                        getActiveSnake().dir -= 2*Math.PI;
+                    }
+                }
+            }
+
             function drawCell(cell, color) {
                 context.save();
                 var x = cell.x * cellWidth;
@@ -183,28 +206,19 @@
             }
 
             function handleKeyDown(evt) {
-                const keySpace = 32;
-                const keyLeft = 37;
-                const keyUp = 38;
-                const keyRight = 39;
-                const keyDown = 40;
-
-                switch (evt.keyCode) {
-                    case keySpace:
-                        changeSnake();
-                        break;
-                    case keyLeft:
-                        getActiveSnake().dir -= turnSpeed;
-                        if(getActiveSnake().dir < 0)
-                            getActiveSnake().dir += 2*Math.PI;
-                        break;
-                    case keyRight:
-                        getActiveSnake().dir += turnSpeed;
-                        if(getActiveSnake().dir > 2*Math.PI)
-                            getActiveSnake().dir -= 2*Math.PI;
-                        break;
+                if(evt.keyCode === keySpace) {
+                    changeSnake();
+                } else {
+                    keys[evt.keyCode] = true;
                 }
             }
+
+            function handleKeyUp(evt) {
+                if(evt.keyCode != keySpace) {
+                    keys[evt.keyCode] = false;
+                }
+            }
+
             function changeSnake() {
                 var oldSnake = getActiveSnake();
                 oldSnake.color = 'green';
