@@ -19,7 +19,7 @@
             const dirRight = 0;
             const dirDown = Math.PI/2;
             const dirLeft = Math.PI;
-            const turnSpeed = Math.PI/12;
+            const turnSpeed = Math.PI/18;
 
             var snakes = initSnakes();
             var activeSnake = snakes[0];
@@ -162,7 +162,7 @@
             }
 
             function drawSnake(snake) {
-                for(var i in snake.cells) {
+                for (var i = snake.cells.length-1; i>=0; i-- ) {
                     drawCell(snake.cells[i], snake.color);
                 }
             }
