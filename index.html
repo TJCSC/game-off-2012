@@ -36,7 +36,7 @@
                     updateSnake(snakes[i]);
                 }
                 drawWall();
-//                drawCell(food, 'red');
+                drawCell(food, 'red');
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
@@ -138,6 +138,10 @@
                 context.save();
                 var x = cell.x * cellWidth;
                 var y = cell.y * cellWidth;
+                var r = cell.r;
+                if(!r) {
+                    r=0;
+                }
                 context.translate(x,y);
                 context.rotate(cell.r);
                 context.beginPath();
@@ -158,7 +162,7 @@
                 var y = Math.random() * (HEIGHT/cellWidth-2);
                 y = Math.floor(y);
                 y += 1;
-                return {x:x, y:y, r:0};
+                return {x:x, y:y};
             }
 
             function drawSnake(snake) {
@@ -169,12 +173,12 @@
 
             function drawWall() {
                 for(var x=0; x<WIDTH/cellWidth; x++) {
-                    drawCell({x:x, y:0, r:0}, 'black');
-                    drawCell({x:x, y:HEIGHT/cellWidth-1, r:0}, 'black');
+                    drawCell({x:x, y:0}, 'black');
+                    drawCell({x:x, y:HEIGHT/cellWidth-1}, 'black');
                 }
                 for(var y=1; y<HEIGHT/cellWidth-1; y++) {
-                    drawCell({x:0, y:y, r:0}, 'black');
-                    drawCell({x:WIDTH/cellWidth-1, y:y, r:0}, 'black');
+                    drawCell({x:0, y:y}, 'black');
+                    drawCell({x:WIDTH/cellWidth-1, y:y}, 'black');
                 }
             }
 
