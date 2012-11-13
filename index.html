@@ -38,6 +38,7 @@
                 //console.log("done");
                 drawWall();
                 drawCell(food, 'red');
+                killSnakes();
                 window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
@@ -124,8 +125,10 @@
                     var head = snake.cells[0];
                     if(head.x < 1 || head.x >= WIDTH/cellWidth-1) {
                         snakes.splice(i, 1);
+                            changeSnake();
                     } else if(head.y < 1 || head.y >= HEIGHT/cellWidth-1) {
                         snakes.splice(i, 1);
+                        changeSnake();
                     }
                     for(var j=snakes.length-1; j>=0; j--) {
                         for(var k in snakes[j].cells) {
@@ -134,8 +137,10 @@
                             if(cell.x === head.x && cell.y === head.y) {
                                 if(k === 0) {
                                     snakes.splice(j, 1);
+                                    changeSnake();
                                     if(snakes[j].cells.length > 1) {
                                         snakes.splice(i, 1);
+                                        changeSnake();
                                     }
                                 } else {
                                     snakes[j].cells = snakes[j].cells.slice(0, k);
@@ -217,12 +222,13 @@
                 }
             }
             function changeSnake() {
+                if(snakes.length == 0) {
+                    return;
+                }
                 var oldSnake = getActiveSnake();
                 oldSnake.color = 'green';
                 
-                var newPos = snakes.indexOf(oldSnake) + 1;
-                if(newPos >= snakes.length)
-                    newPos = 0;
+                var newPos = (snakes.indexOf(oldSnake) + 1) % snakes.length;
                 activeSnake = snakes[newPos];
                 activeSnake.color = 'blue';
             }
