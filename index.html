@@ -6,6 +6,13 @@
         <canvas id="canvas" width="800" height="600"></canvas>
         <script>
             var canvas = document.getElementById('canvas');
+			if (!canvas.getContext){
+				// if canvas not supported
+				alert('broke');
+			} else {
+				//canvas is supported
+				//alert('not broke');
+			}  
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
             var context = canvas.getContext('2d');
