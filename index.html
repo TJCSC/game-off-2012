@@ -64,6 +64,7 @@
                 var tail = {x:head.x,y:head.y,r:head.r};
                 tail.x += Math.cos(snake.dir);
                 tail.y += Math.sin(snake.dir);
+                tail.r = snake.dir;
 
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
@@ -134,17 +135,20 @@
             }
 
             function drawCell(cell, color) {
-                context.beginPath();
+                context.save();
                 var x = cell.x * cellWidth;
                 var y = cell.y * cellWidth;
+                context.translate(x,y);
                 context.rotate(cell.r);
-                context.rect(x, y, cellWidth, cellWidth);
+                context.beginPath();
+                context.rect(0, 0, cellWidth, cellWidth);
                 context.fillStyle = color;
                 context.fill();
                 context.lineWidth = 2;
                 context.strokeStyle = 'white';
                 context.stroke();
                 context.closePath();
+                context.restore();
             }
 
             function placeFood() {
