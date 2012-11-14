@@ -51,14 +51,14 @@
             function initSnakes() {
                 var firstSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    firstSnake.cells.push({x:i, y:1, r:0});
+                    firstSnake.cells.push({x:i, y:1, r:dirRight});
                 }
                 firstSnake.dir = dirRight;
                 firstSnake.prevDir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    secondSnake.cells.push({x:i, y:2, r:0});
+                    secondSnake.cells.push({x:i, y:2, r:dirRight});
                 }
                 secondSnake.dir = dirRight;
                 secondSnake.prevDir = dirRight;
@@ -76,7 +76,8 @@
 
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
-                if(Math.abs(head.x - food.x) <= 1 && Math.abs(head.y - food.y) <= 1) { // fixme: better collision detection
+                if(distance(head, food) <= 1) {
+                //if(Math.abs(head.x - food.x) <= 1 && Math.abs(head.y - food.y) <= 1) { // fixme: better collision detection
                     food = placeFood();
                     if(snake.cells.length === 10) {
 //                        splitSnake(snake);
@@ -84,6 +85,12 @@
                 } else {
                     cells.pop();
                 }
+            }
+
+            function distance(c1, c2) {
+                var x1 = c1.x, y1 = c1.y;
+                var x2 = c2.x, y2 = c2.y;
+                return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
             }
 
             function splitSnake(snake) { // fixme
@@ -161,10 +168,7 @@
                 context.save();
                 var x = cell.x * cellWidth;
                 var y = cell.y * cellWidth;
-                var r = cell.r;
-                if(!r) {
-                    r=0;
-                }
+                var r = cell.r || 0;
                 context.translate(x,y);
                 context.rotate(cell.r);
                 context.beginPath();
@@ -224,9 +228,7 @@
                 oldSnake.color = 'green';
                 
                 var newPos = snakes.indexOf(oldSnake) + 1;
-                if(newPos >= snakes.length)
-                    newPos = 0;
-                activeSnake = snakes[newPos];
+                activeSnake = snakes[newPos % snakes.length];
                 activeSnake.color = 'blue';
             }
 
