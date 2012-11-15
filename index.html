@@ -243,9 +243,9 @@
 
             function checkCollision(c1, c2) { // needs cleaning
             // http://www.gamedev.net/page/resources/_/technical/game-programming/2d-rotated-rectangle-collision-r2604
-//                if(distance(c1,c2) > 1.5) { // Quick check (1.5 = sqrt(2))
-  //                  return false;
-    //            }
+                if(distance(c1,c2) > 1.5) { // Quick check (1.5 = sqrt(2))
+                    return false;
+                }
 
                 var axes = new Array();
                 var A = getCorners(c1);
@@ -267,19 +267,11 @@
                     var bmin = Math.min(projb[0],projb[1],projb[2],projb[3]);
                     var amax = Math.max(proja[0], proja[1], proja[2], proja[3]);
                     var amin = Math.min(proja[0], proja[1], proja[2], proja[3]);
-                    if(!(bmax < amin || amax < bmin)) {
-//                    if( (amin<bmin && bmin<amax) ) {
-                        console.log(amin,amax,bmin,bmax);
-                        console.log(axes);
-                        console.log(proja,projb);
-                        console.log(A,B)
-
-                        quit(0);
-//                        return true;
+                    if(bmin > amax || amin > bmax) {
+                        return false;
                     }
                 }
-                
-                
+                return true;
             }
             function getCorners(cell) {
                 if(!cell.r) {
