@@ -45,7 +45,7 @@
                 drawWall();
                 drawCell(food, 'red');
                 doMovement();
-                window.setTimeout(function(){requestAnimationFrame(loop)}, 625);
+                window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
             }
 
             function initSnakes() {
@@ -57,7 +57,7 @@
                 firstSnake.prevDir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
-                for(var i=9; i>0; i--) {
+                for(var i=5; i>0; i--) {
                     secondSnake.cells.push({x:i, y:2, r:dirRight});
                 }
                 secondSnake.dir = dirRight;
@@ -81,7 +81,6 @@
                     food = placeFood();
                     if(snake.cells.length === 10) {
                         splitSnake(snake);
-                        console.log(snakes);
                     }
                 } else {
                     cells.pop();
@@ -156,14 +155,15 @@
             }
 
             function drawCell(cell, color) {
+                var half = cellWidth/2;
                 context.save();
-                var x = cell.x * cellWidth;
-                var y = cell.y * cellWidth;
+                var x = cell.x * cellWidth + half;
+                var y = cell.y * cellWidth + half;
                 var r = cell.r || 0;
                 context.translate(x,y);
                 context.rotate(cell.r);
                 context.beginPath();
-                context.rect(0, 0, cellWidth, cellWidth);
+                context.rect(-half, -half, cellWidth, cellWidth);
                 context.fillStyle = color;
                 context.fill();
                 context.lineWidth = 2;
