@@ -295,8 +295,10 @@
                 A[UL] = {x:-0.5,y:-0.5};
                 A[LL] = {x:-0.5,y: 0.5};
                 for(i=0;i<4;i++) {
-                    A[i].x = A[i].x*A.cos - A[i].y*A.sin;
-                    A[i].y = A[i].x*A.sin + A[i].y*A.cos;
+                    ax = A[i].x;
+                    ay = A[i].y;
+                    A[i].x = ax*A.cos + ay*A.sin;
+                    A[i].y = -ax*A.sin + ay*A.cos;
 
                     A[i].x += cell.x;
                     A[i].y += cell.y;
