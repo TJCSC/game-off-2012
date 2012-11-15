@@ -32,6 +32,10 @@
             const keyDown = 40;
             var keys = {keyLeft:false, keyUp:false, keyRight:false, keyDown:false};
 
+            const LR = 0;
+            const LL = 1;
+            const UL = 2;
+            const UR = 3;
 
             window.addEventListener('keydown',handleKeyDown,true);
             window.addEventListener('keyup',handleKeyUp,true);
@@ -239,56 +243,13 @@
 
             function checkCollision(c1, c2) { // needs cleaning
             // http://www.gamedev.net/page/resources/_/technical/game-programming/2d-rotated-rectangle-collision-r2604
-                if(distance(c1,c2) > 1.5) { // Quick check (1.5 = sqrt(2))
-                    return false;
-                }
-
-                if(!c1.r) {
-                    c1.r = 0;
-                }
-                if(!c2.r) {
-                    c2.r = 0;
-                }
-                const LR = 0;
-                const LL = 1;
-                const UL = 2;
-                const UR = 3;
+//                if(distance(c1,c2) > 1.5) { // Quick check (1.5 = sqrt(2))
+  //                  return false;
+    //            }
 
                 var axes = new Array();
-                var A = new Array(new Array(), new Array(), new Array(), new Array()); // c1's coordinates
-                var B = new Array(new Array(), new Array(), new Array(), new Array()); // c2's coordinates
-
-                A.cos = Math.abs(Math.cos(c1.r)); 
-                A.sin = Math.abs(Math.sin(c1.r));
-
-                A[LR].x = c1.x - (A.cos+A.sin)/2 + A.cos + A.sin;
-                A[LR].y = c1.y - (A.cos+A.sin)/2 + A.sin;
-
-                A[LL].x = c1.x - (A.cos+A.sin)/2 + A.cos;
-                A[LL].y = c1.y - (A.cos+A.sin)/2 + A.sin + A.cos;
-
-                A[UL].x = c1.x - (A.cos+A.sin)/2;
-                A[UL].y = c1.y - (A.cos+A.sin)/2 + A.cos;
-
-                A[UR].x = c1.x - (A.cos+A.sin)/2 + A.sin;
-                A[UR].y = c1.y - (A.cos+A.sin)/2;
-                
-                // ======
-
-                B.cos = Math.abs(Math.cos(c2.r));
-                B.sin = Math.abs(Math.sin(c2.r));
-
-                B[LR].x = c2.x - (B.cos+B.sin)/2 + B.cos + B.sin;
-                B[LR].y = c2.y - (B.cos+B.sin)/2 + B.sin;
-
-                B[LL].x = c2.x - (B.cos+B.sin)/2 + B.cos;
-                B[LL].y = c2.y - (B.cos+B.sin)/2 + B.sin + B.cos;
-
-                B[UL].x = c2.x - (B.cos+B.sin)/2;
-                B[UL].y = c2.y - (B.cos+B.sin)/2 + B.cos;
-
-                B[UR].x = c2.x - (B.cos+B.sin)/2 + B.sin;
-                B[UR].y = c2.y - (B.cos+B.sin)/2;
+                var A = getCorners(c1);
+                var B = getCorners(c2);
 
                 axes[0] = {x:A[UR].x-A[UL].x, y:A[UR].y-A[UL].y};
                 axes[1] = {x:A[UR].x-A[LR].x, y:A[UR].y-A[LR].y};
@@ -300,20 +261,49 @@
                     var projb = new Array();
                     for(var j=0; j<4; j++) {
                         proja[j] = dot(project(A[j],axes[i]),axes[i]);
-                        projb[j] = dot(project(A[j],axes[i]),axes[i]);
+                        projb[j] = dot(project(B[j],axes[i]),axes[i]);
                     }
                     var bmax = Math.max(projb[0],projb[1],projb[2],projb[3]);
                     var bmin = Math.min(projb[0],projb[1],projb[2],projb[3]);
                     var amax = Math.max(proja[0], proja[1], proja[2], proja[3]);
                     var amin = Math.min(proja[0], proja[1], proja[2], proja[3]);
-                    if(bmin < amin || bmax > amin) {
-                        return true;
+                    if(!(bmax < amin || amax < bmin)) {
+//                    if( (amin<bmin && bmin<amax) ) {
+                        console.log(amin,amax,bmin,bmax);
+                        console.log(axes);
+                        console.log(proja,projb);
+                        console.log(A,B)
+
+                        quit(0);
+//                        return true;
                     }
                 }
                 
                 
             }
+            function getCorners(cell) {
+                if(!cell.r) {
+                    cell.r = 0;
+                }
 
+                var A = new Array(new Array(), new Array(), new Array(), new Array()); // cell's coordinates
+                A.cos = Math.cos(cell.r); 
+                A.sin = Math.sin(cell.r);
+
+                A[LR] = {x: 0.5,y: 0.5};
+                A[UR] = {x: 0.5,y:-0.5};
+                A[UL] = {x:-0.5,y:-0.5};
+                A[LL] = {x:-0.5,y: 0.5};
+                for(i=0;i<4;i++) {
+                    A[i].x = A[i].x*A.cos - A[i].y*A.sin;
+                    A[i].y = A[i].x*A.sin + A[i].y*A.cos;
+
+                    A[i].x += cell.x;
+                    A[i].y += cell.y;
+                }
+
+                return A;                
+            }
             function project(point,axis) { // Takes projection of one onto the other
                 var inter = dot(point,axis)/dot(axis,axis);
                 return {x:inter*axis.x, y:inter*axis.y};
