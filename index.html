@@ -88,12 +88,14 @@
             }
 
             function distance(c1, c2) {
-                var x1 = c1.x, y1 = c1.y;
-                var x2 = c2.x, y2 = c2.y;
+                var x1 = c1.x + cellWidth/2;
+                var y1 = c1.y + cellWidth/2;
+                var x2 = c2.x + cellWidth/2;
+                var y2 = c2.y + cellWidth/2;
                 return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
             }
 
-            function splitSnake(snake) { // fixme
+            function splitSnake(snake) { 
                 var newSnake = {cells:new Array()};
                 for(var i=0; i<5; i++) {
                     newSnake.cells.push(snake.cells.pop());
