@@ -45,7 +45,7 @@
                 drawWall();
                 drawCell(food, 'red');
                 doMovement();
-                window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
+                window.setTimeout(function(){requestAnimationFrame(loop)}, 625);
             }
 
             function initSnakes() {
@@ -57,7 +57,7 @@
                 firstSnake.prevDir = dirRight;
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
-                for(var i=5; i>0; i--) {
+                for(var i=9; i>0; i--) {
                     secondSnake.cells.push({x:i, y:2, r:dirRight});
                 }
                 secondSnake.dir = dirRight;
@@ -80,7 +80,8 @@
                 //if(Math.abs(head.x - food.x) <= 1 && Math.abs(head.y - food.y) <= 1) { // fixme: better collision detection
                     food = placeFood();
                     if(snake.cells.length === 10) {
-//                        splitSnake(snake);
+                        splitSnake(snake);
+                        console.log(snakes);
                     }
                 } else {
                     cells.pop();
@@ -98,19 +99,9 @@
                 for(var i=0; i<5; i++) {
                     newSnake.cells.push(snake.cells.pop());
                 }
-                var cells = newSnake.cells;
-                if(cells[0].x+1 === cells[1].x) {
-                    newSnake.dir = dirLeft;
-                    newSnake.prevDir = dirLeft;
-                } else if(cells[0].x-1 === cells[1].x) {
-                    newSnake.dir = dirRight;
-                    newSnake.prevDir = dirRight;
-                } else if(cells[0].y+1 === cells[1].y) {
-                    newSnake.dir = dirUp;
-                    newSnake.prevDir = dirUp;
-                } else if(cells[0].y-1 === cells[1].y) {
-                    newSnake.dir = dirDown;
-                    newSnake.prevDir = dirDown;
+                newSnake.dir = newSnake.cells[0].r - Math.PI;
+                if(newSnake.dir < 0) {
+                    newSnake.dir += 2*Math.PI;
                 }
                 newSnake.color = 'green';
                 snakes.push(newSnake);
