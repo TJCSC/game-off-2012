@@ -23,7 +23,7 @@
 
             var snakes = initSnakes();
             var activeSnake = snakes[0];
-            var cellWidth = 5; // UNDO
+            var cellWidth = 10;
             var food = placeFood();
             const keySpace = 32;
             const keyLeft = 37;
@@ -32,15 +32,20 @@
             const keyDown = 40;
             var keys = {keyLeft:false, keyUp:false, keyRight:false, keyDown:false};
 
+
             window.addEventListener('keydown',handleKeyDown,true);
             window.addEventListener('keyup',handleKeyUp,true);
             requestAnimationFrame(loop);
 
             function loop() {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
-                if(checkCollision(snakes[0].cells[0],snakes[1].cells[0])) {
+/*                if(checkCollision(snakes[0].cells[0],snakes[1].cells[0])) {
                     console.log("collide");
-                }
+                    for(var i in snakes) {
+                        drawSnake(snakes[i]);
+                    }
+                    return;
+                } */ // Useful for debugging - shows snakes as their heads collide
                 for(var i in snakes) {
                     drawSnake(snakes[i]);
                     updateSnake(snakes[i]);
@@ -62,7 +67,7 @@
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    secondSnake.cells.push({x:i, y:2, r:dirRight});
+                    secondSnake.cells.push({x:i, y:3, r:dirRight});
                 }
                 secondSnake.dir = dirRight;
                 secondSnake.prevDir = dirRight;
@@ -233,7 +238,8 @@
                 return activeSnake;
             }
 
-            function checkCollision(c1, c2) { // fixme
+            function checkCollision(c1, c2) { // needs cleaning
+            // http://www.gamedev.net/page/resources/_/technical/game-programming/2d-rotated-rectangle-collision-r2604
                 if(distance(c1,c2) > 1.5) { // Quick check (1.5 = sqrt(2))
                     return false;
                 }
@@ -244,65 +250,65 @@
                 if(!c2.r) {
                     c2.r = 0;
                 }
+                const LR = 0;
+                const LL = 1;
+                const UL = 2;
+                const UR = 3;
+
 
                 var axes = new Array();
-                var A = {UR:new Array(), UL:new Array(), LL:new Array(), LR:new Array()}; // c1's coordinates
-                var B = {UR:new Array(), UL:new Array(), LL:new Array(), LR:new Array()}; // c2's coordinates
+                var A = new Array(new Array(), new Array(), new Array(), new Array()); // c1's coordinates
+                var B = new Array(new Array(), new Array(), new Array(), new Array()); // c2's coordinates
 
                 A.cos = Math.abs(Math.cos(c1.r)); 
                 A.sin = Math.abs(Math.sin(c1.r));
 
-                A.LR.x = c1.x - (A.cos+A.sin)/2 + A.cos + A.sin;
-                A.LR.y = c1.y - (A.cos+A.sin)/2 + A.sin;
+                A[LR].x = c1.x - (A.cos+A.sin)/2 + A.cos + A.sin;
+                A[LR].y = c1.y - (A.cos+A.sin)/2 + A.sin;
 
-                A.LL.x = c1.x - (A.cos+A.sin)/2 + A.cos;
-                A.LL.y = c1.y - (A.cos+A.sin)/2 + A.sin + A.cos;
+                A[LL].x = c1.x - (A.cos+A.sin)/2 + A.cos;
+                A[LL].y = c1.y - (A.cos+A.sin)/2 + A.sin + A.cos;
 
-                A.UL.x = c1.x - (A.cos+A.sin)/2;
-                A.UL.y = c1.y - (A.cos+A.sin)/2 + A.cos;
+                A[UL].x = c1.x - (A.cos+A.sin)/2;
+                A[UL].y = c1.y - (A.cos+A.sin)/2 + A.cos;
 
-                A.UR.x = c1.x - (A.cos+A.sin)/2 + A.sin;
-                A.UR.y = c1.y - (A.cos+A.sin)/2;
+                A[UR].x = c1.x - (A.cos+A.sin)/2 + A.sin;
+                A[UR].y = c1.y - (A.cos+A.sin)/2;
                 
                 // ======
 
                 B.cos = Math.abs(Math.cos(c2.r));
                 B.sin = Math.abs(Math.sin(c2.r));
 
-                B.LR.x = c2.x - (B.cos+B.sin)/2 + B.cos + B.sin;
-                B.LR.y = c2.y - (B.cos+B.sin)/2 + B.sin;
+                B[LR].x = c2.x - (B.cos+B.sin)/2 + B.cos + B.sin;
+                B[LR].y = c2.y - (B.cos+B.sin)/2 + B.sin;
 
-                B.LL.x = c2.x - (B.cos+B.sin)/2 + B.cos;
-                B.LL.y = c2.y - (B.cos+B.sin)/2 + B.sin + B.cos;
+                B[LL].x = c2.x - (B.cos+B.sin)/2 + B.cos;
+                B[LL].y = c2.y - (B.cos+B.sin)/2 + B.sin + B.cos;
 
-                B.UL.x = c2.x - (B.cos+B.sin)/2;
-                B.UL.y = c2.y - (B.cos+B.sin)/2 + B.cos;
+                B[UL].x = c2.x - (B.cos+B.sin)/2;
+                B[UL].y = c2.y - (B.cos+B.sin)/2 + B.cos;
 
-                B.UR.x = c2.x - (B.cos+B.sin)/2 + B.sin;
-                B.UR.y = c2.y - (B.cos+B.sin)/2;
+                B[UR].x = c2.x - (B.cos+B.sin)/2 + B.sin;
+                B[UR].y = c2.y - (B.cos+B.sin)/2;
 
-                axes[0] = {x:A.UR.x-A.UL.x, y:A.UR.y-A.UL.y};
-                axes[1] = {x:A.UR.x-A.LR.x, y:A.UR.y-A.LR.y};
-                axes[2] = {x:B.UL.x-B.LL.x, y:B.UL.y-B.LL.y};
-                axes[3] = {x:B.UL.x-B.UR.x, y:B.UL.y-B.UR.y};
+                axes[0] = {x:A[UR].x-A[UL].x, y:A[UR].y-A[UL].y};
+                axes[1] = {x:A[UR].x-A[LR].x, y:A[UR].y-A[LR].y};
+                axes[2] = {x:B[UL].x-B[LL].x, y:B[UL].y-B[LL].y};
+                axes[3] = {x:B[UL].x-B[UR].x, y:B[UL].y-B[UR].y};
 
                 for(var i=0; i<4; i++) {
                     var proja = new Array();
                     var projb = new Array();
-                    proja[0] = dot(project(A.LR,axes[i]),axes[i]);
-                    proja[1] = dot(project(A.UR,axes[i]),axes[i]);
-                    proja[2] = dot(project(A.LL,axes[i]),axes[i]);
-                    proja[3] = dot(project(A.UL,axes[i]),axes[i]);
-                    projb[0] = dot(project(B.LR,axes[i]),axes[i]);
-                    projb[1] = dot(project(B.UR,axes[i]),axes[i]);
-                    projb[2] = dot(project(B.LL,axes[i]),axes[i]);
-                    projb[3] = dot(project(B.UL,axes[i]),axes[i]);
+                    for(var j=0; j<4; j++) {
+                        proja[j] = dot(project(A[j],axes[i]),axes[i]);
+                        projb[j] = dot(project(A[j],axes[i]),axes[i]);
+                    }
                     var bmax = Math.max(projb[0],projb[1],projb[2],projb[3]);
                     var bmin = Math.min(projb[0],projb[1],projb[2],projb[3]);
                     var amax = Math.max(proja[0], proja[1], proja[2], proja[3]);
                     var amin = Math.min(proja[0], proja[1], proja[2], proja[3]);
                     if(bmin < amin || bmax > amin) {
-                        console.log(bmin,bmax,amin,amax);
                         return true;
                     }
                 }
@@ -310,11 +316,11 @@
                 
             }
 
-            function project(point,axis) {
-                var thing = (point.x*axis.x)*(point.y*axis.y)/(axis.x*axis.x+axis.y*axis.y);
-                return {x:thing*axis.x, y:thing*axis.y};
+            function project(point,axis) { // Takes projection of one onto the other
+                var inter = dot(point,axis)/dot(axis,axis);
+                return {x:inter*axis.x, y:inter*axis.y};
             }
-            function dot(v1,v2) {
+            function dot(v1,v2) { // Dot product of two vectors
                 return v1.x*v2.x+v1.y*v2.y;
             }
 
