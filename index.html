@@ -85,8 +85,7 @@
 
                 snake.cells.unshift(tail);
                 snake.prevDir = snake.dir;
-                if(distance(head, food) <= 1) {
-                //if(Math.abs(head.x - food.x) <= 1 && Math.abs(head.y - food.y) <= 1) { // fixme: better collision detection
+                if(checkCollision(head,food)) {
                     food = placeFood();
                     if(snake.cells.length === 10) {
                         splitSnake(snake);
@@ -254,7 +253,6 @@
                 const LL = 1;
                 const UL = 2;
                 const UR = 3;
-
 
                 var axes = new Array();
                 var A = new Array(new Array(), new Array(), new Array(), new Array()); // c1's coordinates
