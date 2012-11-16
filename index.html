@@ -97,6 +97,8 @@
                 } else {
                     cells.pop();
                 }
+
+                killSnakes();
             }
 
             function distance(c1, c2) {
@@ -124,20 +126,25 @@
             // you cut off part of that snake.  If you have a head on
             // collision, both die, unless one snake is just a head,
             // in which case it dies and the other lives.
-            function killSnakes() { // fixme
+            function killSnakes() { 
                 for(var i=snakes.length-1; i>=0; i--) {
                     var snake = snakes[i];
                     var head = snake.cells[0];
-                    if(head.x < 1 || head.x >= WIDTH/cellWidth-1) {
-                        snakes.splice(i, 1);
-                    } else if(head.y < 1 || head.y >= HEIGHT/cellWidth-1) {
-                        snakes.splice(i, 1);
+                    if(snake.cells.length<1) {
+                        snakes.splice(i,1);
+                        continue;
                     }
+                    if(head.x < 1 || head.x >= WIDTH/cellWidth-1) { //update to new collision detection
+                        snake.cells.splice(0, 1);
+                    } else if(head.y < 1 || head.y >= HEIGHT/cellWidth-1) {
+                        snake.cells.splice(0, 1);
+                    }
+                    
                     for(var j=snakes.length-1; j>=0; j--) {
                         for(var k in snakes[j].cells) {
-                            if(j === i && k < 1) continue;
+                            if(j === i && k < 2) continue;
                             var cell = snakes[j].cells[k];
-                            if(cell.x === head.x && cell.y === head.y) {
+                            if(checkCollision(cell,head)) {
                                 if(k === 0) {
                                     snakes.splice(j, 1);
                                     if(snakes[j].cells.length > 1) {
@@ -149,7 +156,7 @@
                                 break;
                             }
                         }
-                    }
+                    } 
                 }
             }
 
@@ -267,7 +274,7 @@
                     var bmin = Math.min(projb[0],projb[1],projb[2],projb[3]);
                     var amax = Math.max(proja[0], proja[1], proja[2], proja[3]);
                     var amin = Math.min(proja[0], proja[1], proja[2], proja[3]);
-                    if(bmin > amax || amin > bmax) {
+                    if(bmin >= amax || amin >= bmax) {
                         return false;
                     }
                 }
