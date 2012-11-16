@@ -71,7 +71,7 @@
                 firstSnake.color = 'blue';
                 var secondSnake = {cells:new Array()};
                 for(var i=5; i>0; i--) {
-                    secondSnake.cells.push({x:i, y:3, r:dirRight});
+                    secondSnake.cells.push({x:i, y:12, r:dirRight});
                 }
                 secondSnake.dir = dirRight;
                 secondSnake.prevDir = dirRight;
@@ -139,19 +139,33 @@
                     } else if(head.y < 1 || head.y >= HEIGHT/cellWidth-1) {
                         snake.cells.splice(0, 1);
                     }
+                    if(snake.cells.length<1) { // fixme: stop duplicating this code block
+                        snakes.splice(i,1);
+                        continue;
+                    }
                     
+                    snakeloop:
                     for(var j=snakes.length-1; j>=0; j--) {
                         for(var k in snakes[j].cells) {
                             if(j === i && k < 2) continue;
                             var cell = snakes[j].cells[k];
                             if(checkCollision(cell,head)) {
-                                if(k === 0) {
-                                    snakes.splice(j, 1);
+                                if(k == 0) {
+                                    if(snakes[i].cells.length > 1) {
+                                        snakes[j].cells.splice(0, 1);
+                                    }
                                     if(snakes[j].cells.length > 1) {
-                                        snakes.splice(i, 1);
+                                        snakes[i].cells.splice(0, 1);
                                     }
                                 } else {
-                                    snakes[j].cells = snakes[j].cells.slice(0, k);
+                                    snakes[j].cells = snakes[j].cells.slice(0, k); // fixme: have snake grow by one
+                                }
+                                if(snakes[j].cells.length<1) {
+                                    snakes.splice(j,1);
+                                }
+                                if(snakes[i].cells.length<1) {
+                                    snakes.splice(i,1);
+                                    break snakeloop;
                                 }
                                 break;
                             }
