@@ -137,7 +137,7 @@
                     var snake = snakes[i];
                     var head = snake.cells[0];
                     if(snake.cells.length<1) {
-                        snakes.splice(i,1);
+                        delete snakes[snake];
                         continue;
                     }
                     if(head.x < 1 || head.x >= WIDTH/cellWidth-1) { //update to new collision detection
@@ -146,7 +146,7 @@
                         snake.cells.splice(0, 1);
                     }
                     if(snake.cells.length<1) { // fixme: stop duplicating this code block
-                        snakes.splice(i,1);
+                        delete snakes[snake];
                         continue;
                     }
                     
@@ -157,20 +157,24 @@
                             var cell = snakes[j].cells[k];
                             if(checkCollision(cell,head)) {
                                 if(k == 0) {
-                                    if(snakes[i].cells.length > 1) {
+                                    ilength = snakes[i].cells.length;
+                                    jlength = snakes[j].cells.length;
+                                    if(ilength >= 1) {
                                         snakes[j].cells.splice(0, 1);
                                     }
-                                    if(snakes[j].cells.length > 1) {
+                                    if(jlength >= 1) {
                                         snakes[i].cells.splice(0, 1);
                                     }
+                                    
                                 } else {
                                     snakes[j].cells = snakes[j].cells.slice(0, k); // fixme: have snake grow by one
                                 }
+                                console.log(snakes);
                                 if(snakes[j].cells.length<1) {
-                                    snakes.splice(j,1);
+                                    delete snakes[snakes[j]];
                                 }
-                                if(snakes[i].cells.length<1) {
-                                    snakes.splice(i,1);
+                                if(snake.cells.length<1) {
+                                    delete snakes[snake];
                                     break snakeloop;
                                 }
                                 break;
