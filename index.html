@@ -44,27 +44,46 @@
             const UL = 2;
             const UR = 3;
 
+            var targetFPS = 30;
+            var frameDelay = 1000/targetFPS; // time between frames in ms
+            var updateDelay = 125; // time between updates in ms
+            var time0 = new Date();
+            var time1 = time0;
+            var ttime = 0; // total time since last frame
+            var dtime = 0; // time difference
+
             window.addEventListener('keydown',handleKeyDown,true);
             window.addEventListener('keyup',handleKeyUp,true);
             requestAnimationFrame(loop);
 
             function loop() {
+                time1 = new Date();
+                dtime = time1-time0;
+                time0 = time1;
+
+                ttime += dtime;
+
+                if(ttime > updateDelay){
+                    ttime -= updateDelay;
+                    updateWorld();
+                }
+                drawWorld();
+
+                window.setTimeout(function(){requestAnimationFrame(loop)}, frameDelay);
+            }
+            function drawWorld() {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
-/*                if(checkCollision(snakes[0].cells[0],snakes[1].cells[0])) {
-                    console.log("collide");
-                    for(var i in snakes) {
-                        drawSnake(snakes[i]);
-                    }
-                    return;
-                } */ // Useful for debugging - shows snakes as their heads collide
                 for(var i in snakes) {
                     drawSnake(snakes[i]);
-                    updateSnake(snakes[i]);
                 }
                 drawWall();
                 drawCell(food, 'red');
+            }
+            function updateWorld() {
                 doMovement();
-                window.setTimeout(function(){requestAnimationFrame(loop)}, 125);
+                for(var i in snakes) {
+                    updateSnake(snakes[i]);
+                }
             }
 
             function initSnakes() {
@@ -212,7 +231,7 @@
                 context.fill();
                 context.lineWidth = 2;
                 context.strokeStyle = 'white';
-                context.stroke();
+//                context.stroke();
                 context.closePath();
                 context.restore();
             }
