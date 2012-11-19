@@ -137,7 +137,7 @@
                     var snake = snakes[i];
                     var head = snake.cells[0];
                     if(snake.cells.length<1) {
-                        delete snakes[snake];
+                        snakes.splice(i,1);
                         continue;
                     }
                     if(head.x < 1 || head.x >= WIDTH/cellWidth-1) { //update to new collision detection
@@ -146,7 +146,7 @@
                         snake.cells.splice(0, 1);
                     }
                     if(snake.cells.length<1) { // fixme: stop duplicating this code block
-                        delete snakes[snake];
+                        snakes.splice(i,1);
                         continue;
                     }
                     
@@ -170,10 +170,10 @@
                                     snakes[j].cells = snakes[j].cells.slice(0, k); // fixme: have snake grow by one
                                 }
                                 if(snakes[j].cells.length<1) {
-                                    delete snakes[snakes[j]];
+                                    snakes.splice(j,1);
                                 }
                                 if(snake.cells.length<1) {
-                                    delete snakes[snake];
+                                    snakes.splice(snakes.indexOf(snake),1);
                                     break snakeloop;
                                 }
                                 break;
