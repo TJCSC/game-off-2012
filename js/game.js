@@ -27,12 +27,13 @@ var snakes = initSnakes();
 var activeSnake = snakes[0];
 var cellWidth = 10;
 var food = placeFood();
+const keyF = 70;
 const keySpace = 32;
 const keyLeft = 37;
 const keyUp = 38;
 const keyRight = 39;
 const keyDown = 40;
-var keys = {keyLeft:false, keyUp:false, keyRight:false, keyDown:false};
+var keys = {keyLeft:false, keyUp:false, keyRight:false, keyDown:false, keyF:false};
 
 const LR = 0;
 const LL = 1;
@@ -45,7 +46,9 @@ var updateDelay = 125/snakeSmooth; // time between updates in ms
 var time0 = new Date();
 var time1 = time0;
 var ttime = 0; // total time since last frame
+var t2time = 0; // total time
 var dtime = 0; // time difference
+var tframes = 0;
 
 
 window.addEventListener('keydown',handleKeyDown,true);
@@ -53,11 +56,13 @@ window.addEventListener('keyup',handleKeyUp,true);
 requestAnimationFrame(loop);
 
 function loop() {
+	tframes++;
     time1 = new Date();
     dtime = time1-time0;
     time0 = time1;
 
     ttime += dtime;
+	t2time += dtime;
 
     if(ttime > updateDelay){
         ttime -= updateDelay;
@@ -74,6 +79,9 @@ function drawWorld() {
     }
     drawWall();
     drawCell(food, 'red');
+	if(keys[keyF]) {
+		drawFPSCount();
+	}
 }
 function updateWorld() {
     doMovement();
@@ -84,7 +92,7 @@ function updateWorld() {
 
 function initSnakes() {
     var firstSnake = {cells:new Array()};
-    for(var i=15*snakeSmooth; i>0; i--) {
+    for(var i=5*snakeSmooth; i>0; i--) {
         firstSnake.cells.push({x:i/snakeSmooth, y:1, r:dirRight});
     }
     firstSnake.dir = dirRight;
@@ -278,7 +286,7 @@ function drawWall() {
 function handleKeyDown(evt) {
     if(evt.keyCode === keySpace) {
         changeSnake();
-    } else {
+	} else {
         keys[evt.keyCode] = true;
     }
 }
@@ -287,6 +295,18 @@ function handleKeyUp(evt) {
     if(evt.keyCode != keySpace) {
         keys[evt.keyCode] = false;
     }
+}
+
+function drawFPSCount() {
+	context.save();
+	context.textBaseline = "top";
+	context.textAlign = "right";
+	context.font = "bold 12px sans-serif";
+	context.fillStyle = "red";
+	fps = (tframes/(t2time/1000)); // fixme
+	context.fillText(fps.toFixed(2),800-cellWidth,cellWidth);
+	context.restore();
+
 }
 
 function changeSnake() {
