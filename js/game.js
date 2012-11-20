@@ -21,6 +21,8 @@ const dirDown = Math.PI/2;
 const dirLeft = Math.PI;
 const turnSpeed = Math.PI/18;
 
+const snakeSmooth = 4; // smoothness factor
+
 var snakes = initSnakes();
 var activeSnake = snakes[0];
 var cellWidth = 10;
@@ -39,11 +41,12 @@ const UR = 3;
 
 var targetFPS = 30;
 var frameDelay = 1000/targetFPS; // time between frames in ms
-var updateDelay = 125; // time between updates in ms
+var updateDelay = 125/snakeSmooth; // time between updates in ms
 var time0 = new Date();
 var time1 = time0;
 var ttime = 0; // total time since last frame
 var dtime = 0; // time difference
+
 
 window.addEventListener('keydown',handleKeyDown,true);
 window.addEventListener('keyup',handleKeyUp,true);
@@ -81,15 +84,15 @@ function updateWorld() {
 
 function initSnakes() {
     var firstSnake = {cells:new Array()};
-    for(var i=5; i>0; i--) {
-        firstSnake.cells.push({x:i, y:1, r:dirRight});
+    for(var i=15*snakeSmooth; i>0; i--) {
+        firstSnake.cells.push({x:i/snakeSmooth, y:1, r:dirRight});
     }
     firstSnake.dir = dirRight;
     firstSnake.prevDir = dirRight;
     firstSnake.color = 'blue';
     var secondSnake = {cells:new Array()};
-    for(var i=5; i>0; i--) {
-        secondSnake.cells.push({x:i, y:12, r:dirRight});
+    for(var i=5*snakeSmooth; i>0; i--) {
+        secondSnake.cells.push({x:i/snakeSmooth, y:12, r:dirRight});
     }
     secondSnake.dir = dirRight;
     secondSnake.prevDir = dirRight;
@@ -101,15 +104,15 @@ function updateSnake(snake) {
     var cells = snake.cells;
     var head = cells[0];
     var tail = {x:head.x,y:head.y,r:head.r};
-    tail.x += Math.cos(snake.dir);
-    tail.y += Math.sin(snake.dir);
+    tail.x += Math.cos(snake.dir)/snakeSmooth;
+    tail.y += Math.sin(snake.dir)/snakeSmooth;
     tail.r = snake.dir;
 
     snake.cells.unshift(tail);
     snake.prevDir = snake.dir;
     if(checkCollision(head,food)) {
         food = placeFood();
-        if(snake.cells.length === 10) {
+        if(snake.cells.length > 10*snakeSmooth) {
             splitSnake(snake);
         }
     } else {
@@ -129,7 +132,7 @@ function distance(c1, c2) {
 
 function splitSnake(snake) { 
     var newSnake = {cells:new Array()};
-    for(var i=0; i<5; i++) {
+    for(var i=0; i<5*snakeSmooth; i++) {
         newSnake.cells.push(snake.cells.pop());
     }
     newSnake.dir = newSnake.cells[0].r - Math.PI;
@@ -165,7 +168,7 @@ function killSnakes() {
         snakeloop:
         for(var j=snakes.length-1; j>=0; j--) {
             for(var k in snakes[j].cells) {
-                if(j === i && k < 2) continue;
+                if(j === i && k<snakeSmooth*2) continue;
                 var cell = snakes[j].cells[k];
                 if(checkCollision(cell,head)) {
                     if(k == 0) {
@@ -211,8 +214,8 @@ function doMovement() {
 }
 
 function drawCell(cell, color) {
-    var half = cellWidth/2;
     context.save();
+    var half = cellWidth/2;
     var x = cell.x * cellWidth + half;
     var y = cell.y * cellWidth + half;
     var r = cell.r || 0;
@@ -222,9 +225,21 @@ function drawCell(cell, color) {
     context.rect(-half, -half, cellWidth, cellWidth);
     context.fillStyle = color;
     context.fill();
-    context.lineWidth = 2;
+    context.lineWidth = 0;
     context.strokeStyle = 'white';
-//                context.stroke();
+	//context.stroke();
+    context.closePath();
+    context.restore();
+}
+function drawCircle(cell, color) {
+    context.save();
+    var half = cellWidth/2;
+    var x = cell.x * cellWidth + half;
+    var y = cell.y * cellWidth + half;
+    context.beginPath();
+	context.arc(x,y,cellWidth/2,0,2*Math.PI);    
+    context.fillStyle = color;
+    context.fill();
     context.closePath();
     context.restore();
 }
@@ -240,9 +255,13 @@ function placeFood() {
 }
 
 function drawSnake(snake) {
-    for (var i = snake.cells.length-1; i>=0; i-- ) {
-        drawCell(snake.cells[i], snake.color);
+	if(snake.cells.length>1) {
+		drawCell(snake.cells[snake.cells.length-1], snake.color);
+	}
+    for (var i = snake.cells.length-2; i>=1; i-- ) {
+        drawCircle(snake.cells[i], snake.color);
     }
+	drawCell(snake.cells[0], snake.color);
 }
 
 function drawWall() {
