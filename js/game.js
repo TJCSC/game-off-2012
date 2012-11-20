@@ -147,11 +147,11 @@ function splitSnake(snake) {
 function killSnakes() { 
     for(var i=snakes.length-1; i>=0; i--) {
         var snake = snakes[i];
-        var head = snake.cells[0];
-        if(snake.cells.length<1) {
+        if(!snake || snake.cells.length<1) {
             snakes.splice(i,1);
             continue;
         }
+        var head = snake.cells[0];
         if(head.x < 1 || head.x >= WIDTH/cellWidth-1) { //update to new collision detection
             snake.cells.splice(0, 1);
         } else if(head.y < 1 || head.y >= HEIGHT/cellWidth-1) {
