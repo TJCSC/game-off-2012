@@ -56,13 +56,13 @@ window.addEventListener('keyup',handleKeyUp,true);
 requestAnimationFrame(loop);
 
 function loop() {
-	tframes++;
+    tframes++;
     time1 = new Date();
     dtime = time1-time0;
     time0 = time1;
 
     ttime += dtime;
-	t2time += dtime;
+    t2time += dtime;
 
     if(ttime > updateDelay){
         ttime -= updateDelay;
@@ -79,9 +79,9 @@ function drawWorld() {
     }
     drawWall();
     drawCell(food, 'red');
-	if(keys[keyF]) {
-		drawFPSCount();
-	}
+    if(keys[keyF]) {
+        drawFPSCount();
+    }
 }
 function updateWorld() {
     doMovement();
@@ -233,9 +233,9 @@ function drawCell(cell, color) {
     context.rect(-half, -half, cellWidth, cellWidth);
     context.fillStyle = color;
     context.fill();
-    context.lineWidth = 0;
+    context.lineWidth = 2;
     context.strokeStyle = 'white';
-	//context.stroke();
+    //context.stroke();
     context.closePath();
     context.restore();
 }
@@ -245,7 +245,7 @@ function drawCircle(cell, color) {
     var x = cell.x * cellWidth + half;
     var y = cell.y * cellWidth + half;
     context.beginPath();
-	context.arc(x,y,cellWidth/2,0,2*Math.PI);    
+    context.arc(x,y,cellWidth/2,0,2*Math.PI);    
     context.fillStyle = color;
     context.fill();
     context.closePath();
@@ -263,13 +263,13 @@ function placeFood() {
 }
 
 function drawSnake(snake) {
-	if(snake.cells.length>1) {
-		drawCell(snake.cells[snake.cells.length-1], snake.color);
-	}
+    if(snake.cells.length>1) {
+        drawCell(snake.cells[snake.cells.length-1], snake.color);
+    }
     for (var i = snake.cells.length-2; i>=1; i-- ) {
         drawCircle(snake.cells[i], snake.color);
     }
-	drawCell(snake.cells[0], snake.color);
+    drawCell(snake.cells[0], snake.color);
 }
 
 function drawWall() {
@@ -286,7 +286,7 @@ function drawWall() {
 function handleKeyDown(evt) {
     if(evt.keyCode === keySpace) {
         changeSnake();
-	} else {
+    } else {
         keys[evt.keyCode] = true;
     }
 }
@@ -298,14 +298,14 @@ function handleKeyUp(evt) {
 }
 
 function drawFPSCount() {
-	context.save();
-	context.textBaseline = "top";
-	context.textAlign = "right";
-	context.font = "bold 12px sans-serif";
-	context.fillStyle = "red";
-	fps = (tframes/(t2time/1000)); // fixme
-	context.fillText(fps.toFixed(2),800-cellWidth,cellWidth);
-	context.restore();
+    context.save();
+    context.textBaseline = "top";
+    context.textAlign = "right";
+    context.font = "bold 12px sans-serif";
+    context.fillStyle = "red";
+    fps = (tframes/(t2time/1000)); // fixme
+    context.fillText(fps.toFixed(2),800-cellWidth,cellWidth);
+    context.restore();
 
 }
 
